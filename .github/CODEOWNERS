@@ -1,0 +1,11 @@
+# Default owner for everything not matched below
+*                                   @Oday-Najad
+
+# Per-service ownership (documents boundaries now; matters once collaborators join)
+/services/matching-engine/         @Oday-Najad
+/services/extraction-agents/       @Oday-Najad
+/services/cv-tailoring-agent/      @Oday-Najad
+/services/application-agent/       @Oday-Najad
+/services/company-search/          @Oday-Najad
+/libs/schemas/                     @Oday-Najad
+/infra/                            @Oday-Najad
