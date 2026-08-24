@@ -1,3 +1,5 @@
+<img width="1690" height="476" alt="Meridian-logo-white-background" src="https://github.com/user-attachments/assets/1d750f8f-449a-46b7-a8f6-839d6fd59c81" />
+
 # Meridian
 
 An AI-agent-driven, two-sided hiring platform. No CV keyword games on the candidate side, no black-box keyword-matching ATS on the company side — both sides are matched through the same explainable, semantic matching core.
