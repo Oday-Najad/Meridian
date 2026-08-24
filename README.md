@@ -4,7 +4,7 @@ An AI-agent-driven, two-sided hiring platform. No CV keyword games on the candid
 
 This repo is a **monorepo**: multiple independently-deployable services sharing common libraries, so we get microservice independence with monorepo velocity (no cross-repo version juggling while the team is small).
 
-## Repo Layout
+## Repo Layout:
 
 ```
 meridian/
