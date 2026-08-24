@@ -1,4 +1,9 @@
+<<<<<<< HEAD
+<img width="1690" height="476" alt="Meridian-logo-white-background" src="https://github.com/user-attachments/assets/1d750f8f-449a-46b7-a8f6-839d6fd59c81" />
+
+=======
 <img width="1690" height="476" alt="Meridian-logo-white-background" src="https://github.com/user-attachments/assets/5d8e7739-ba24-4e33-87a2-79b4822006e4" />
+>>>>>>> origin/main
 
 # Meridian
 
