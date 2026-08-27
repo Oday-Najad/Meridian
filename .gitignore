@@ -29,3 +29,21 @@ htmlcov/
 *.safetensors
 *.bin
 checkpoints/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+apps/web/.env*.local
+
+# Go
+services/gateway/meridian-gateway
+services/gateway/*.exe
+
+# Supabase local dev
+.supabase/
+
+# NOTE: generated schema files (libs/schemas-json/, libs/schemas-ts/,
+# services/gateway/internal/schemas/generated.go) are intentionally NOT
+# ignored -- they must be committed so CI's schema-drift-check can diff
+# against them.
