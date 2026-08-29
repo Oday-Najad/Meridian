@@ -2,7 +2,7 @@
 # Regenerates Go structs and TypeScript interfaces from the canonical Pydantic
 # schemas in libs/schemas. Run this after any change to libs/schemas, and
 # commit the regenerated output. CI re-runs this and fails the build if the
-# committed generated files don't match — see .github/workflows/ci.yml,
+# committed generated files don't match -- see .github/workflows/ci.yml,
 # job `schema-drift-check`.
 set -euo pipefail
 
@@ -16,7 +16,13 @@ mkdir -p "$(dirname "$GO_OUT")"
 mkdir -p "$(dirname "$TS_OUT")"
 
 echo "==> Exporting Pydantic models to JSON Schema..."
-python "$REPO_ROOT/scripts/export_json_schema.py" --out "$JSON_SCHEMA_DIR"
+# PYTHONPATH must include the repo root explicitly -- running a script by
+# path only adds the script's OWN directory (scripts/) to Python's import
+# path, not the repo root, so `from libs.schemas...` would otherwise fail
+# regardless of the caller's shell environment (this bit us in CI: local
+# manual testing had PYTHONPATH set in the shell already, masking the gap).
+PYTHONPATH="$REPO_ROOT" python "$REPO_ROOT/scripts/export_json_schema.py" --out "$JSON_SCHEMA_DIR"
+
 # Guard: until Phase 1 defines real CPO/JPO models, MODELS in
 # export_json_schema.py is intentionally empty, so no *.json files exist yet.
 # Treat that as a valid, expected state rather than a failure -- quicktype
@@ -25,6 +31,7 @@ if ! compgen -G "$JSON_SCHEMA_DIR"/*.json > /dev/null; then
   echo "==> No JSON Schema files found yet (expected until Phase 1 defines real models). Skipping codegen."
   exit 0
 fi
+
 echo "==> Generating Go structs via quicktype..."
 npx --yes quicktype \
   --src "$JSON_SCHEMA_DIR"/*.json \

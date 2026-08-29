@@ -1,0 +1,421 @@
+{
+  "$defs": {
+    "CandidatePreferences": {
+      "properties": {
+        "desired_roles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Desired Roles",
+          "type": "array"
+        },
+        "locations": {
+          "description": "Preferred city/region names or 'remote'.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Locations",
+          "type": "array"
+        },
+        "remote_policy": {
+          "description": "Acceptable work arrangements.",
+          "items": {
+            "$ref": "#/$defs/RemotePolicy"
+          },
+          "title": "Remote Policy",
+          "type": "array"
+        },
+        "compensation_floor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum acceptable compensation, in the candidate's stated currency.",
+          "title": "Compensation Floor"
+        },
+        "compensation_currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 4217 code, e.g. 'USD', 'EUR'.",
+          "title": "Compensation Currency"
+        },
+        "visa_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visa Status"
+        },
+        "industries_to_avoid": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Industries To Avoid",
+          "type": "array"
+        }
+      },
+      "title": "CandidatePreferences",
+      "type": "object"
+    },
+    "CandidateSkill": {
+      "properties": {
+        "skill_ref": {
+          "description": "Normalized skill identifier, e.g. 'python'. Shared vocabulary with JPO.skill_requirements.",
+          "title": "Skill Ref",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "Human-readable form, e.g. 'Python'.",
+          "title": "Display Name",
+          "type": "string"
+        },
+        "self_rated_proficiency": {
+          "$ref": "#/$defs/ProficiencyLevel"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "skill_ref",
+        "display_name",
+        "self_rated_proficiency"
+      ],
+      "title": "CandidateSkill",
+      "type": "object"
+    },
+    "Education": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "institution": {
+          "title": "Institution",
+          "type": "string"
+        },
+        "credential": {
+          "description": "e.g. 'BSc Computer Science', 'Professional Certificate in Data Science'.",
+          "title": "Credential",
+          "type": "string"
+        },
+        "field_of_study": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Of Study"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        }
+      },
+      "required": [
+        "id",
+        "institution",
+        "credential"
+      ],
+      "title": "Education",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "description": "Points a skill claim at the specific place it came from.",
+      "properties": {
+        "type": {
+          "enum": [
+            "work_experience_claim",
+            "linked_artifact",
+            "education",
+            "certification"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of a WorkExperienceClaim or Education entry within this same CPO, when type requires it.",
+          "title": "Ref"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External URL (e.g. a GitHub repo, portfolio, publication) when type='linked_artifact'.",
+          "title": "Url"
+        },
+        "context": {
+          "description": "Short human-readable note on what this evidence shows.",
+          "title": "Context",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "context"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "Metric": {
+      "description": "A quantified outcome, e.g. \"40% reduction\" or \"3x throughput\".\nKept as a structured (value, unit) pair rather than a free-text string\nso it can be compared/sorted/verified programmatically, not just\nread.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "description": "Free-text unit label, e.g. 'percent_reduction', 'x_multiplier', 'dollars_saved', 'users_onboarded'. Not an enum: outcomes across different roles are too varied to enumerate up front, but the (value, unit) pair keeps it structured rather than a sentence.",
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Metric",
+      "type": "object"
+    },
+    "ProficiencyLevel": {
+      "description": "Used both for a candidate's self-rated skill level (CPO) and a job's\nrequired skill level (JPO) -- the shared vocabulary that makes\n\"candidate claims advanced, job requires intermediate\" a real\nstructural comparison rather than a string-similarity guess.",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "expert"
+      ],
+      "title": "ProficiencyLevel",
+      "type": "string"
+    },
+    "RemotePolicy": {
+      "enum": [
+        "remote",
+        "hybrid",
+        "onsite"
+      ],
+      "title": "RemotePolicy",
+      "type": "string"
+    },
+    "SeniorityLevel": {
+      "description": "A candidate's inferred/stated seniority (CPO) and a job's target\nseniority band (JPO) share this same scale.",
+      "enum": [
+        "entry",
+        "mid",
+        "senior",
+        "lead",
+        "principal"
+      ],
+      "title": "SeniorityLevel",
+      "type": "string"
+    },
+    "WorkExperience": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "company": {
+          "title": "Company",
+          "type": "string"
+        },
+        "start_date": {
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None means current/ongoing role.",
+          "title": "End Date"
+        },
+        "seniority": {
+          "$ref": "#/$defs/SeniorityLevel"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/WorkExperienceClaim"
+          },
+          "title": "Claims",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "company",
+        "start_date",
+        "seniority"
+      ],
+      "title": "WorkExperience",
+      "type": "object"
+    },
+    "WorkExperienceClaim": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "action": {
+          "description": "What the candidate did, e.g. 'Implemented a caching layer for API responses'.",
+          "title": "Action",
+          "type": "string"
+        },
+        "outcome": {
+          "description": "What resulted, e.g. 'Reduced average page load time'.",
+          "title": "Outcome",
+          "type": "string"
+        },
+        "metric": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Metric"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Structured quantification if the candidate provided one. None if genuinely unquantified -- never fabricated."
+        },
+        "verified": {
+          "default": false,
+          "description": "Set True only by the Phase 5 fact-checker pass after cross-referencing this claim. Never set True at intake.",
+          "title": "Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "action",
+        "outcome"
+      ],
+      "title": "WorkExperienceClaim",
+      "type": "object"
+    }
+  },
+  "description": "The canonical, structured representation of a candidate. This is\nthe single source of truth generated JSON Schema / Go structs / TS\ninterfaces are derived from -- see scripts/generate_schemas.sh.",
+  "properties": {
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "full_name": {
+      "title": "Full Name",
+      "type": "string"
+    },
+    "headline": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Short self-description, e.g. 'Backend engineer, fintech focus'.",
+      "title": "Headline"
+    },
+    "skills": {
+      "items": {
+        "$ref": "#/$defs/CandidateSkill"
+      },
+      "title": "Skills",
+      "type": "array"
+    },
+    "experience": {
+      "items": {
+        "$ref": "#/$defs/WorkExperience"
+      },
+      "title": "Experience",
+      "type": "array"
+    },
+    "education": {
+      "items": {
+        "$ref": "#/$defs/Education"
+      },
+      "title": "Education",
+      "type": "array"
+    },
+    "preferences": {
+      "$ref": "#/$defs/CandidatePreferences"
+    },
+    "profile_completeness": {
+      "default": 0.0,
+      "description": "0-1 score of how complete this profile is, used to nudge onboarding.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Profile Completeness",
+      "type": "number"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "full_name"
+  ],
+  "title": "CandidateProfileObject",
+  "type": "object"
+}
