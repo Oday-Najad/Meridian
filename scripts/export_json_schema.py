@@ -2,20 +2,16 @@
 file, using Pydantic's built-in model_json_schema(). This is the single
 source of truth that scripts/generate_schemas.sh feeds into quicktype to
 produce Go structs and TypeScript interfaces.
-
-Real model imports get added here once the CPO/JPO schemas are designed in
-Phase 1 — this is deliberately a no-op placeholder for now so the codegen
-pipeline can be proven end-to-end before real schema content exists.
 """
 
 import argparse
 import json
 from pathlib import Path
 
-# Phase 1 will populate this list, e.g.:
-# from libs.schemas.candidate import CandidateProfileObject
-# from libs.schemas.job import JobProfileObject
-MODELS: list[type] = []
+from libs.schemas.candidate import CandidateProfileObject
+from libs.schemas.job import JobProfileObject
+
+MODELS: list[type] = [CandidateProfileObject, JobProfileObject]
 
 
 def main() -> None:
@@ -25,11 +21,6 @@ def main() -> None:
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
-
-    if not MODELS:
-        print("No models registered yet in MODELS list — nothing to export. "
-              "This is expected until Phase 1 defines the CPO/JPO schemas.")
-        return
 
     for model in MODELS:
         schema = model.model_json_schema()

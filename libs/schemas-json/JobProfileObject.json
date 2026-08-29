@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "CompensationRange": {
+      "properties": {
+        "min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max"
+        },
+        "currency": {
+          "description": "ISO 4217 code, e.g. 'USD', 'EUR'.",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "currency"
+      ],
+      "title": "CompensationRange",
+      "type": "object"
+    },
+    "EmploymentType": {
+      "enum": [
+        "full_time",
+        "part_time",
+        "contract",
+        "internship"
+      ],
+      "title": "EmploymentType",
+      "type": "string"
+    },
+    "ProficiencyLevel": {
+      "description": "Used both for a candidate's self-rated skill level (CPO) and a job's\nrequired skill level (JPO) -- the shared vocabulary that makes\n\"candidate claims advanced, job requires intermediate\" a real\nstructural comparison rather than a string-similarity guess.",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "expert"
+      ],
+      "title": "ProficiencyLevel",
+      "type": "string"
+    },
+    "RemotePolicy": {
+      "enum": [
+        "remote",
+        "hybrid",
+        "onsite"
+      ],
+      "title": "RemotePolicy",
+      "type": "string"
+    },
+    "SeniorityLevel": {
+      "description": "A candidate's inferred/stated seniority (CPO) and a job's target\nseniority band (JPO) share this same scale.",
+      "enum": [
+        "entry",
+        "mid",
+        "senior",
+        "lead",
+        "principal"
+      ],
+      "title": "SeniorityLevel",
+      "type": "string"
+    },
+    "SkillImportance": {
+      "description": "JPO-only concept -- how strictly a job requires a given skill.\nDeliberately NOT shared with CPO: a candidate's skill has no\nequivalent 'importance', it has evidence instead. Keeping this\nJPO-only is a direct application of the Phase 1 decision to avoid a\nsingle mirrored schema with fields that are 'only relevant if X'.",
+      "enum": [
+        "required",
+        "preferred"
+      ],
+      "title": "SkillImportance",
+      "type": "string"
+    },
+    "SkillRequirement": {
+      "properties": {
+        "skill_ref": {
+          "description": "Normalized skill identifier, e.g. 'python'. Shared vocabulary with CPO.skills.",
+          "title": "Skill Ref",
+          "type": "string"
+        },
+        "display_name": {
+          "title": "Display Name",
+          "type": "string"
+        },
+        "required_proficiency": {
+          "$ref": "#/$defs/ProficiencyLevel"
+        },
+        "importance": {
+          "$ref": "#/$defs/SkillImportance"
+        }
+      },
+      "required": [
+        "skill_ref",
+        "display_name",
+        "required_proficiency",
+        "importance"
+      ],
+      "title": "SkillRequirement",
+      "type": "object"
+    }
+  },
+  "description": "The canonical, structured representation of a job posting.",
+  "properties": {
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "company": {
+      "title": "Company",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "skill_requirements": {
+      "items": {
+        "$ref": "#/$defs/SkillRequirement"
+      },
+      "title": "Skill Requirements",
+      "type": "array"
+    },
+    "responsibilities": {
+      "description": "Plain-text responsibility statements as extracted from the posting -- not structured claims (see module docstring).",
+      "items": {
+        "type": "string"
+      },
+      "title": "Responsibilities",
+      "type": "array"
+    },
+    "seniority_band": {
+      "$ref": "#/$defs/SeniorityLevel"
+    },
+    "employment_type": {
+      "$ref": "#/$defs/EmploymentType"
+    },
+    "remote_policy": {
+      "$ref": "#/$defs/RemotePolicy"
+    },
+    "compensation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CompensationRange"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "None if not disclosed in the posting."
+    },
+    "location": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Location"
+    },
+    "source_url": {
+      "description": "The employer career-page/job-board URL this was extracted from -- required for the compliant, non-LinkedIn-scraping acquisition path.",
+      "title": "Source Url",
+      "type": "string"
+    },
+    "posted_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Posted Date"
+    }
+  },
+  "required": [
+    "job_id",
+    "company",
+    "title",
+    "seniority_band",
+    "employment_type",
+    "remote_policy",
+    "source_url"
+  ],
+  "title": "JobProfileObject",
+  "type": "object"
+}
